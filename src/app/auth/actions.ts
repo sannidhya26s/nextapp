@@ -14,7 +14,7 @@ export async function signup(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { name } },
@@ -25,6 +25,11 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
+
+  if (data.session) {
+    redirect("/");
+  }
+
   redirect(
     "/login?message=" +
       encodeURIComponent("Check your email to confirm your account, then log in."),
