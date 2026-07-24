@@ -33,7 +33,7 @@ export function PostCard({
   );
 
   return (
-    <Card>
+    <Card className="bg-card/25 shadow-xl shadow-black/30 backdrop-blur-2xl">
       <CardHeader className="flex items-center gap-3 space-y-0">
         <Link href={`/profile/${post.users?.id ?? ""}`}>
           <Avatar>
@@ -76,12 +76,12 @@ export function PostCard({
           )}
         </div>
         {post.code_snippet && (
-          <pre className="max-h-80 overflow-auto rounded-lg bg-muted p-3 text-xs">
+          <pre className="max-h-80 overflow-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-emerald-300/90 backdrop-blur-sm">
             <code>{post.code_snippet}</code>
           </pre>
         )}
         {post.video_url && <VideoEmbed url={post.video_url} />}
-        <div className="flex items-center gap-1 border-t pt-2">
+        <div className="flex items-center gap-1 border-t border-white/10 pt-2">
           <LikeButton postId={post.id} likeCount={post.likes.length} isLiked={isLiked} />
           <span className="flex items-center gap-1.5 px-2 text-sm text-muted-foreground">
             <MessageCircle className="h-4 w-4" />

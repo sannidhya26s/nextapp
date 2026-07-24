@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
+    <html lang="en" className={cn("dark font-sans", inter.variable)}>
       <body className="antialiased">
         <Navbar />
         <main className="mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 py-8">
