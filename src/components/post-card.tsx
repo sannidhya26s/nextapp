@@ -50,7 +50,7 @@ export function PostCard({
           >
             {post.users?.name ?? "Unknown"}
           </Link>
-          <p className="text-xs text-muted-foreground">
+          <p className="font-mono text-[0.7rem] tracking-wide text-muted-foreground uppercase">
             {new Date(post.created_at).toLocaleString()}
           </p>
         </div>

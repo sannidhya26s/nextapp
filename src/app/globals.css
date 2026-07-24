@@ -27,25 +27,25 @@
   }
 
   .dark {
-    --background: 222 47% 7%;
-    --foreground: 210 20% 96%;
-    --card: 222 35% 11%;
-    --card-foreground: 210 20% 96%;
-    --popover: 222 35% 10%;
-    --popover-foreground: 210 20% 96%;
-    --primary: 199 89% 52%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 222 25% 16%;
-    --secondary-foreground: 210 20% 96%;
-    --muted: 222 25% 14%;
-    --muted-foreground: 215 15% 65%;
-    --accent: 199 60% 18%;
-    --accent-foreground: 210 20% 96%;
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 210 20% 96%;
-    --border: 222 25% 22%;
-    --input: 222 25% 20%;
-    --ring: 199 89% 55%;
+    --background: 220 65% 4%;
+    --foreground: 190 40% 95%;
+    --card: 220 45% 8%;
+    --card-foreground: 190 40% 95%;
+    --popover: 220 45% 7%;
+    --popover-foreground: 190 40% 95%;
+    --primary: 186 100% 50%;
+    --primary-foreground: 220 65% 5%;
+    --secondary: 220 30% 13%;
+    --secondary-foreground: 190 40% 95%;
+    --muted: 220 30% 11%;
+    --muted-foreground: 210 20% 62%;
+    --accent: 186 70% 14%;
+    --accent-foreground: 190 40% 95%;
+    --destructive: 340 90% 58%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 35% 18%;
+    --input: 220 35% 16%;
+    --ring: 186 100% 50%;
   }
 }
 
@@ -57,17 +57,25 @@
     @apply text-foreground;
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(circle at 18% 15%, hsl(199 89% 52% / 0.18), transparent 42%),
-      radial-gradient(circle at 84% 10%, hsl(266 85% 62% / 0.14), transparent 40%),
-      radial-gradient(circle at 50% 95%, hsl(189 94% 55% / 0.10), transparent 45%),
-      linear-gradient(hsl(210 20% 96% / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(210 20% 96% / 0.05) 1px, transparent 1px);
+      repeating-linear-gradient(
+        0deg,
+        hsl(0 0% 100% / 0.025) 0px,
+        hsl(0 0% 100% / 0.025) 1px,
+        transparent 1px,
+        transparent 3px
+      ),
+      linear-gradient(hsl(186 100% 80% / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(186 100% 80% / 0.05) 1px, transparent 1px),
+      radial-gradient(circle at 50% 100%, hsl(320 90% 55% / 0.1), transparent 45%),
+      radial-gradient(circle at 85% 8%, hsl(280 90% 62% / 0.16), transparent 40%),
+      radial-gradient(circle at 15% 12%, hsl(186 100% 50% / 0.18), transparent 42%);
     background-size:
-      100% 100%,
-      100% 100%,
-      100% 100%,
+      auto,
       42px 42px,
-      42px 42px;
+      42px 42px,
+      100% 100%,
+      100% 100%,
+      100% 100%;
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -76,5 +84,23 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.6);
+  }
+
+  .scan-sweep {
+    background: linear-gradient(180deg, transparent, hsl(186 100% 60% / 0.07), transparent);
+    animation: scan-sweep 9s linear infinite;
+  }
+
+  @keyframes scan-sweep {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
   }
 }

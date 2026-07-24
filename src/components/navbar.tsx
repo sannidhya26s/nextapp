@@ -10,10 +10,13 @@ export async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="sticky top-0 z-10 border-b border-white/10 bg-background/50 backdrop-blur-xl">
+    <header className="sticky top-0 z-10 border-b border-primary/20 bg-background/50 shadow-[0_1px_20px_-4px_hsl(var(--primary)/0.5)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
-        <Link href="/" className="font-semibold tracking-tight text-primary">
-          Dev Portfolio Feed
+        <Link
+          href="/"
+          className="text-glow font-mono text-sm font-semibold tracking-wide text-primary uppercase"
+        >
+          &gt;_ Dev Portfolio Feed
         </Link>
         <nav className="flex items-center gap-2">
           {user ? (
