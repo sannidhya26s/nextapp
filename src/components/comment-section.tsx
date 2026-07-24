@@ -1,4 +1,5 @@
-import { addComment } from "@/app/posts/actions";
+import { X } from "lucide-react";
+import { addComment, deleteComment } from "@/app/posts/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,10 +13,12 @@ export function CommentSection({
   postId,
   comments,
   canComment,
+  currentUserId,
 }: {
   postId: string;
   comments: CommentWithUser[];
   canComment: boolean;
+  currentUserId: string | null;
 }) {
   return (
     <div className="space-y-3">
@@ -29,10 +32,23 @@ export function CommentSection({
                   {(comment.users?.name ?? "?").slice(0, 1).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <p>
+              <p className="flex-1">
                 <span className="font-medium">{comment.users?.name ?? "Unknown"}</span>{" "}
                 <span className="text-muted-foreground">{comment.text}</span>
               </p>
+              {currentUserId && currentUserId === comment.user_id && (
+                <form action={deleteComment.bind(null, comment.id)}>
+                  <Button
+                    type="submit"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Delete comment"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </form>
+              )}
             </li>
           ))}
         </ul>

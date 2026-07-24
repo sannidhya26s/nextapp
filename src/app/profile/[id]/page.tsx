@@ -42,7 +42,7 @@ export default async function ProfilePage({
   const { data: posts } = await supabase
     .from("posts")
     .select(
-      `id, title, description, code_snippet, video_url, created_at,
+      `id, user_id, title, description, code_snippet, video_url, created_at,
        users ( id, name, avatar_url ),
        likes ( user_id ),
        comments ( id, post_id, user_id, text, created_at, users ( id, name, avatar_url ) )`,
@@ -56,7 +56,7 @@ export default async function ProfilePage({
   return (
     <div className="space-y-8">
       <Card>
-        <CardHeader className="flex-row items-center gap-4 space-y-0">
+        <CardHeader className="flex items-center gap-4 space-y-0">
           <Avatar className="h-16 w-16">
             <AvatarImage src={profile.avatar_url ?? undefined} />
             <AvatarFallback className="text-lg">
@@ -84,7 +84,7 @@ export default async function ProfilePage({
           <CardHeader>
             <CardTitle className="text-base">Edit profile</CardTitle>
           </CardHeader>
-          <form action={updateProfile}>
+          <form action={updateProfile} encType="multipart/form-data">
             <CardContent className="space-y-4">
               {error && (
                 <p className="rounded-md bg-destructive/10 p-2 text-sm text-destructive">
@@ -100,14 +100,16 @@ export default async function ProfilePage({
                 <Textarea id="bio" name="bio" rows={3} defaultValue={profile.bio} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="avatar_url">Avatar URL</Label>
-                <Input
-                  id="avatar_url"
-                  name="avatar_url"
-                  type="url"
-                  defaultValue={profile.avatar_url ?? ""}
-                  placeholder="https://..."
-                />
+                <Label htmlFor="avatar">Avatar</Label>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={profile.avatar_url ?? undefined} />
+                    <AvatarFallback>
+                      {(profile.name || "?").slice(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Input id="avatar" name="avatar" type="file" accept="image/*" />
+                </div>
               </div>
               <Button type="submit">Save changes</Button>
             </CardContent>

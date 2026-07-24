@@ -39,6 +39,76 @@ export async function createPost(formData: FormData) {
   redirect("/");
 }
 
+export async function updatePost(postId: string, formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?error=" + encodeURIComponent("Log in to edit a post."));
+  }
+
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const codeSnippet = String(formData.get("code_snippet") ?? "").trim();
+  const videoUrl = String(formData.get("video_url") ?? "").trim();
+
+  if (!title) {
+    redirect(`/posts/${postId}/edit?error=` + encodeURIComponent("Title is required."));
+  }
+
+  const { error } = await supabase
+    .from("posts")
+    .update({
+      title,
+      description,
+      code_snippet: codeSnippet || null,
+      video_url: videoUrl || null,
+    })
+    .eq("id", postId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    redirect(`/posts/${postId}/edit?error=` + encodeURIComponent(error.message));
+  }
+
+  revalidatePath("/");
+  revalidatePath(`/profile/${user.id}`);
+  redirect("/");
+}
+
+export async function deletePost(postId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?error=" + encodeURIComponent("Log in to delete a post."));
+  }
+
+  await supabase.from("posts").delete().eq("id", postId).eq("user_id", user.id);
+
+  revalidatePath("/");
+  revalidatePath(`/profile/${user.id}`);
+}
+
+export async function deleteComment(commentId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?error=" + encodeURIComponent("Log in to delete a comment."));
+  }
+
+  await supabase.from("comments").delete().eq("id", commentId).eq("user_id", user.id);
+
+  revalidatePath("/");
+}
+
 export async function toggleLike(postId: string) {
   const supabase = await createClient();
   const {

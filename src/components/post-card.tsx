@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { VideoEmbed } from "@/components/video-embed";
 import { LikeButton } from "@/components/like-button";
 import { CommentSection } from "@/components/comment-section";
+import { DeletePostButton } from "@/components/delete-post-button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { CommentRow, LikeRow, PostRow, UserRow } from "@/lib/database.types";
 
 export type FeedPost = PostRow & {
@@ -31,7 +34,7 @@ export function PostCard({
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center gap-3 space-y-0">
+      <CardHeader className="flex items-center gap-3 space-y-0">
         <Link href={`/profile/${post.users?.id ?? ""}`}>
           <Avatar>
             <AvatarImage src={post.users?.avatar_url ?? undefined} />
@@ -40,7 +43,7 @@ export function PostCard({
             </AvatarFallback>
           </Avatar>
         </Link>
-        <div>
+        <div className="flex-1">
           <Link
             href={`/profile/${post.users?.id ?? ""}`}
             className="font-medium hover:underline"
@@ -51,6 +54,17 @@ export function PostCard({
             {new Date(post.created_at).toLocaleString()}
           </p>
         </div>
+        {currentUserId && currentUserId === post.user_id && (
+          <div className="flex items-center gap-1">
+            <Link
+              href={`/posts/${post.id}/edit`}
+              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            >
+              Edit
+            </Link>
+            <DeletePostButton postId={post.id} />
+          </div>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -78,6 +92,7 @@ export function PostCard({
           postId={post.id}
           comments={sortedComments}
           canComment={!!currentUserId}
+          currentUserId={currentUserId}
         />
       </CardContent>
     </Card>
