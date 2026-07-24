@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateProfile } from "@/app/profile/actions";
 import { PostCard, type FeedPost } from "@/components/post-card";
+import { FollowButton } from "@/components/follow-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,27 @@ export default async function ProfilePage({
   const feed = (posts ?? []) as unknown as FeedPost[];
   const isOwnProfile = currentUser?.id === id;
 
+  const [{ count: followerCount }, { count: followingCount }, followingRow] =
+    await Promise.all([
+      supabase
+        .from("follows")
+        .select("id", { count: "exact", head: true })
+        .eq("following_id", id),
+      supabase
+        .from("follows")
+        .select("id", { count: "exact", head: true })
+        .eq("follower_id", id),
+      currentUser && !isOwnProfile
+        ? supabase
+            .from("follows")
+            .select("id")
+            .eq("follower_id", currentUser.id)
+            .eq("following_id", id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+  const isFollowing = !!followingRow.data;
+
   return (
     <div className="space-y-8">
       <Card>
@@ -63,12 +85,19 @@ export default async function ProfilePage({
               {(profile.name || "?").slice(0, 1).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="flex-1">
             <CardTitle>{profile.name || "Unnamed developer"}</CardTitle>
             <p className="text-sm text-muted-foreground">
               Joined {new Date(profile.created_at).toLocaleDateString()}
             </p>
+            <p className="mt-1 font-mono text-xs text-muted-foreground">
+              <span className="text-foreground">{followerCount ?? 0}</span> followers ·{" "}
+              <span className="text-foreground">{followingCount ?? 0}</span> following
+            </p>
           </div>
+          {currentUser && !isOwnProfile && (
+            <FollowButton profileId={id} isFollowing={isFollowing} />
+          )}
         </CardHeader>
         <CardContent>
           {profile.bio ? (

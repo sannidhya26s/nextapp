@@ -13,7 +13,7 @@ A social feed where developers post projects — title, description, code snippe
 
 1. Go to [supabase.com](https://supabase.com) and create a new project.
 2. In the SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). This creates the `users`, `posts`, `comments`, and `likes` tables, a trigger that populates `users` on signup, and Row Level Security policies.
-3. Also run [`supabase/storage.sql`](supabase/storage.sql), which creates a public `avatars` storage bucket with RLS policies scoped to `{user_id}/...` paths.
+3. Also run [`supabase/storage.sql`](supabase/storage.sql) (avatar upload bucket + RLS) and [`supabase/follows.sql`](supabase/follows.sql) (follow/unfollow table + RLS).
 4. In **Project Settings → API**, copy the **Project URL** and **anon public** key.
 5. In **Authentication → URL Configuration**, add `http://localhost:3000/auth/callback` (and your production URL's `/auth/callback` once deployed) as a redirect URL.
 
@@ -43,29 +43,33 @@ Open [http://localhost:3000](http://localhost:3000). The feed (`/`) requires a s
 
 ```
 src/app/
-  page.tsx                 Feed (auth-gated, paginated 10/page)
+  page.tsx                 Feed (auth-gated, paginated 10/page, All/Following tabs)
   login/, signup/           Auth pages
   auth/actions.ts           Sign up / log in / log out server actions
   auth/callback/route.ts    Email confirmation callback
   posts/new/                Create post form
   posts/[id]/edit/          Edit post form (author-only)
   posts/actions.ts          Create/update/delete post, like/unlike, comment, delete comment
-  profile/[id]/             Public profile + own-profile editor (name/bio/avatar)
+  profile/[id]/             Public profile + own-profile editor (name/bio/avatar/follow)
   profile/actions.ts        Update profile + avatar upload server action
+  follows/actions.ts        Follow/unfollow server action
 src/components/
   navbar.tsx, post-card.tsx, like-button.tsx, comment-section.tsx,
-  video-embed.tsx, delete-post-button.tsx
+  video-embed.tsx, delete-post-button.tsx, follow-button.tsx
   ui/                       shadcn/ui components
 src/lib/
   supabase/{client,server,middleware}.ts   Supabase client factories
   database.types.ts         Hand-written types matching supabase/schema.sql
 supabase/schema.sql          Database schema + RLS policies
 supabase/storage.sql         Avatar storage bucket + RLS policies
+supabase/follows.sql         Follow/unfollow table + RLS policies
 ```
 
 `video_url` accepts a YouTube, YouTube Shorts, or Vimeo link (embedded automatically) or a direct `.mp4`/`.webm`/`.ogg` file; anything else renders as a link.
 
 Post authors get Edit/Delete controls on their own posts (delete is confirmed via a dialog), and comment authors get a delete (×) on their own comments — both enforced by RLS server-side, not just hidden in the UI.
+
+Profiles show a Follow/Unfollow button (except your own) and follower/following counts. The feed has an "All" tab (everyone) and a "Following" tab (only people you follow), with an empty-state prompt if you're not following anyone yet.
 
 ## Deploying to Vercel
 
@@ -77,4 +81,4 @@ Post authors get Edit/Delete controls on their own posts (delete is confirmed vi
 
 ## Not in this MVP
 
-OAuth login, infinite-scroll (pagination is page-number based, not scroll-triggered), and video uploads (video is a URL field only — avatars now support file upload via Supabase Storage).
+OAuth login, infinite-scroll (pagination is page-number based, not scroll-triggered), video uploads (video is a URL field only — avatars support file upload via Supabase Storage), notifications, and follower/following list pages (counts only, no clickable list yet).
